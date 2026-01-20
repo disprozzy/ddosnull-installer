@@ -72,7 +72,7 @@ cd /opt/
 git clone https://github.com/disprozzy/la-client.git
 cd la-client/
 
-$PYTHON_CMD -m pip install requests dotenv
+$PYTHON_CMD -m pip install -q requests dotenv
 
 
 echo "Updating agent the configs."
@@ -195,7 +195,7 @@ if [ -f /usr/local/psa/version ]; then
         echo 'default 0;' > /etc/nginx/maps/whitelisted_ips.map
         /usr/bin/systemctl reload nginx
 
-        if ls /usr/local/psa/admin/conf/templates/custom/domain/service/proxy.php; then
+        if ls /usr/local/psa/admin/conf/templates/custom/domain/service/proxy.php 2>/dev/null; then
                 echo ""exists;""
         else
                 mkdir /usr/local/psa/admin/conf/templates/custom/domain/service -p
