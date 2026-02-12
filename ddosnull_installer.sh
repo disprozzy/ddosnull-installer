@@ -187,6 +187,7 @@ if [ -f /usr/local/psa/version ]; then
 
         echo 'default 0;
 
+        ~*googlehc         1;
         ~*googlebot        1;
         ~*bingbot          1;
         ~*yahoo            1;
