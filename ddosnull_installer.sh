@@ -86,11 +86,11 @@ EOF
 
 
 echo "Updating firewall rules."
-iptables -I OUTPUT -d 104.154.244.71 -j ACCEPT &> /dev/null
-iptables -I INPUT -s 104.154.244.71 -j ACCEPT &> /dev/null
+iptables -I OUTPUT -d 136.113.249.151 -j ACCEPT &> /dev/null
+iptables -I INPUT -s 136.113.249.151 -j ACCEPT &> /dev/null
 service iptables save &> /dev/null
 iptables-save > /etc/sysconfig/iptables 
-echo 104.154.244.71 >> /etc/csf/csf.allow 
+echo 136.113.249.151 >> /etc/csf/csf.allow 
 csf -r &> /dev/null 
 
 URL="https://app.ddosnull.com:4433/recaptcha/"
