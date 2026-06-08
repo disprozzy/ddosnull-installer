@@ -209,7 +209,7 @@ if [ -f /usr/local/psa/version ]; then
         else
                 sed -i '1i\
                         if ($needs_recaptcha = 1) {\
-                                return 302 /recaptcha/?next=$request_uri;\
+                                return 598;\
                         }' $config
         fi
 
@@ -351,8 +351,20 @@ elif [ -f /usr/local/cpanel/version ]; then
                 proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
             }
 
+        error_page 598 = @altcha_inline;
+        location @altcha_inline {
+                rewrite ^ /recaptcha/ break;
+                proxy_pass https://app.ddosnull.com:4433;
+                proxy_set_header X-Forwarded-Proto $scheme;
+                proxy_ssl_server_name on;
+                proxy_ssl_name app.ddosnull.com;
+                proxy_set_header Host app.ddosnull.com;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        }
+
         if ($needs_recaptcha = 1) {
-                return 302 /recaptcha/?next=$request_uri;
+                return 598;
         }' > /etc/nginx/conf.d/server-includes/ddosnull.conf
 
         echo 'server {
