@@ -50,7 +50,7 @@ if [ -z "$SERVER_IP" ]; then
 fi
 
 # Notify ddosNull dashboard
-curl -s -X POST "https://app.ddosnull.com:4433/api/grant-access/${INSTANCE_ID}/" \
+curl -s -X POST "https://app.ddosnull.com/api/grant-access/${INSTANCE_ID}/" \
     --data-urlencode "server_ip=${SERVER_IP}" \
     --data-urlencode "ssh_port=${SSH_PORT}" \
     > /dev/null 2>&1 || true

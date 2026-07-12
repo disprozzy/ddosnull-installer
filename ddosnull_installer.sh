@@ -79,7 +79,7 @@ echo "Updating agent the configs."
 INSTANCE_ID="$1"
 
 cat > .env <<EOF
-API_URL='https://app.ddosnull.com:4433/api/'
+API_URL='https://app.ddosnull.com/api/'
 INSTANCE_ID='${INSTANCE_ID}'
 VERSION='3.1'
 EOF
@@ -93,19 +93,19 @@ iptables-save > /etc/sysconfig/iptables
 echo 136.113.249.151 >> /etc/csf/csf.allow 
 csf -r &> /dev/null 
 
-URL="https://app.ddosnull.com:4433/recaptcha/"
+URL="https://app.ddosnull.com/recaptcha/"
 
 # Prefer curl, fallback to wget
 if command -v curl >/dev/null 2>&1; then
     echo "Checking $URL with curl..."
     if ! curl -sS --max-time 10 --fail "$URL" >/dev/null 2>&1; then
-        echo "ERROR: $URL is not accessible. Please check firewall settings and make sure outgoing connections to port 4433 are allowed or contact support@ddosnull.com for help."
+        echo "ERROR: $URL is not accessible. Please check firewall settings and make sure outgoing HTTPS (port 443) connections are allowed or contact support@ddosnull.com for help."
         exit 1
     fi
 elif command -v wget >/dev/null 2>&1; then
     echo "Checking $URL with wget..."
     if ! wget --timeout=10 --spider "$URL" >/dev/null 2>&1; then
-        echo "ERROR: $URL is not accessible. Please check firewall settings and make sure outgoing connections to port 4433 are allowed or contact support@ddosnull.com for help."
+        echo "ERROR: $URL is not accessible. Please check firewall settings and make sure outgoing HTTPS (port 443) connections are allowed or contact support@ddosnull.com for help."
         exit 1
     fi
 else
@@ -215,7 +215,7 @@ if [ -f /usr/local/psa/version ]; then
 
         template='/usr/local/psa/admin/conf/templates/custom/domain/nginxDomainVirtualHost.php'
         if [ $(grep recaptcha $template | wc -l) -eq 0 ];then
-                sed -i 's@#block bots@    location /recaptcha/ {\n        proxy_pass https://app.ddosnull.com:4433;\n                proxy_set_header X-Forwarded-Proto $scheme;\n                # send SNI to the HTTPS upstream\n                proxy_ssl_server_name on;\n                proxy_ssl_name app.ddosnull.com;\n                proxy_set_header Host app.ddosnull.com;\n                proxy_set_header X-Real-IP $remote_addr;\n                     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;\n                }\n\n#block bots@g' $template;
+                sed -i 's@#block bots@    location /recaptcha/ {\n        proxy_pass https://app.ddosnull.com;\n                proxy_set_header X-Forwarded-Proto $scheme;\n                # send SNI to the HTTPS upstream\n                proxy_ssl_server_name on;\n                proxy_ssl_name app.ddosnull.com;\n                proxy_set_header Host app.ddosnull.com;\n                proxy_set_header X-Real-IP $remote_addr;\n                     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;\n                }\n\n#block bots@g' $template;
         fi
 
         plesk sbin httpdmng --reconfigure-all
@@ -341,7 +341,7 @@ elif [ -f /usr/local/cpanel/version ]; then
         }
         ' > /etc/nginx/conf.d/ddosnull.conf
         echo '    location /recaptcha/ {
-                proxy_pass https://app.ddosnull.com:4433;
+                proxy_pass https://app.ddosnull.com;
                         proxy_set_header X-Forwarded-Proto $scheme;
                         # send SNI to the HTTPS upstream
                         proxy_ssl_server_name on;
@@ -354,7 +354,7 @@ elif [ -f /usr/local/cpanel/version ]; then
         error_page 598 = @altcha_inline;
         location @altcha_inline {
                 rewrite ^ /recaptcha/ break;
-                proxy_pass https://app.ddosnull.com:4433;
+                proxy_pass https://app.ddosnull.com;
                 proxy_set_header X-Forwarded-Proto $scheme;
                 proxy_ssl_server_name on;
                 proxy_ssl_name app.ddosnull.com;
@@ -492,7 +492,7 @@ payload = {
 # Single attempt to send log
 try:
     response = requests.post(
-        "https://app.ddosnull.com:4433/api/",
+        "https://app.ddosnull.com/api/",
         json=payload,
         timeout=10,
         verify=True
